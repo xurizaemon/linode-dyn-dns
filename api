@@ -13,10 +13,10 @@ LINODE_API_URL="https://api.linode.com/?api_key=$MY_API_KEY"
 
 # Fetch an IP into $IP.
 function get_ip {
-  local IP=`curl --silent http://checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
+  local IP=`curl --ipv4 --silent http://checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
   [ "$IP" == "" ] && {
     echo "[`date`] dyndns lookup failed, checking whatismyipaddress..." >> $LOG_FILE
-    IP=`curl --silent http://bot.whatismyipaddress.com`
+    IP=`curl --ipv4 --silent http://bot.whatismyipaddress.com`
   }
   [ "$IP" == "" ] && {
     echo "[`date`] whatismyipaddress lookup failed, giving up." >> $LOG_FILE

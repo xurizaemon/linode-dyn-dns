@@ -1,26 +1,17 @@
 #!/bin/bash
 
-
 ##### NO CONFIGURATION NECESSARY.
-
 MY_PATH="$( cd -P "$( dirname "$0" )" && pwd )"
-
 MY_API_KEY=`cat $MY_PATH/.key 2>/dev/null`
-
 MY_DOMAIN_ID=`cat $MY_PATH/.domain 2>/dev/null`
-
 MY_RESOURCE_ID=`cat $MY_PATH/.resource 2>/dev/null`
-
 LOG_FILE="$MY_PATH/dns.log"
-
 CACHED_IP_FILE="$MY_PATH/.ip"
-
 LINODE_API_URL="https://api.linode.com/?api_key=$MY_API_KEY"
-
-
 
 ##### IP FUNCTIONS
 
+# Fetch an IP into $IP.
 function get_ip {
   local IP=`curl --silent http://checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
   [ "$IP" == "" ] && {
@@ -34,11 +25,10 @@ function get_ip {
   echo $IP
 }
 
+# Grab the cached IP.
 function get_cached_ip {
   cat $CACHED_IP_FILE 2>/dev/null
 }
-
-
 
 ##### LINODE API HELPERS
 
@@ -68,6 +58,7 @@ function update_resource_target {
   echo $(curl --silent -g $LINODE_API_URL\&api_action=domain.resource.update\&DomainID=$1\&ResourceID=$2\&TTL_sec=300\&Target=[remote_addr])
 }
 
+# Update the IP address.
 function update {
   IP_OLD=`get_cached_ip`
   IP_NEW=`get_ip`
@@ -81,8 +72,6 @@ function update {
     echo $IP_NEW > $CACHED_IP_FILE
   }
 }
-
-
 
 ##### DO IT
 
